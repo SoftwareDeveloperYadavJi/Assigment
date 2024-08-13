@@ -1,0 +1,43 @@
+const express = require('express');
+const cors = require('cors'); 
+const app = express();
+const port = 3000;
+const db = require('./db');
+app.use(express.json());
+app.use(cors()); // Use cors middleware
+// Placeholder route
+app.get('/', (req, res) => {
+  res.send('API is working!');
+});
+
+
+
+
+app.get('/questions', (req, res) => {
+  db.query('SELECT * FROM queryanswer', (err, results) => {
+    if (err) {
+      console.error('Error fetching questions:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.get('/questions/:id', (req, res) => {
+  const questionId = req.params.id;
+  db.query('SELECT * FROM queryanswer WHERE id = ?', [questionId], (err, results) => {
+    if (err) {
+      console.error('Error fetching question:', err);
+      res.status(500).send('Server error');
+      return;
+    }
+    res.json(results[0]);
+  });
+});
+
+
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});

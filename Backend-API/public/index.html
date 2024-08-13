@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .container { width: 80%; margin: 0 auto; }
+    form { margin-bottom: 20px; }
+    label { display: block; margin: 10px 0 5px; }
+    input, button { padding: 10px; margin-bottom: 10px; width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Panel</h1>
+
+    <!-- Add Question Form -->
+    <form id="add-question-form">
+      <h2>Add New Question</h2>
+      <label for="question">Question:</label>
+      <input type="text" id="question" name="question" required>
+      
+      <label for="answer">Answer:</label>
+      <input type="text" id="answer" name="answer" required>
+      
+      <button type="submit">Add Question</button>
+    </form>
+
+    <!-- Delete Question Form -->
+    <form id="delete-question-form">
+      <h2>Delete Question</h2>
+      <label for="question-id">Question ID:</label>
+      <input type="text" id="question-id" name="question-id" required>
+      
+      <button type="submit">Delete Question</button>
+    </form>
+  </div>
+
+  <script>
+    // Add Question Form Submission
+    document.getElementById('add-question-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const question = document.getElementById('question').value;
+      const answer = document.getElementById('answer').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/admin/questions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ question, answer }),
+        });
+        
+        if (response.ok) {
+          alert('Question added successfully');
+          document.getElementById('question').value = '';
+          document.getElementById('answer').value = '';
+        } else {
+          alert('Failed to add question');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred');
+      }
+    });
+
+    // Delete Question Form Submission
+    document.getElementById('delete-question-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const questionId = document.getElementById('question-id').value;
+
+      try {
+        const response = await fetch(`http://localhost:3000/admin/questions/${questionId}`, {
+          method: 'DELETE',
+        });
+        
+        if (response.ok) {
+          alert('Question deleted successfully');
+          document.getElementById('question-id').value = '';
+        } else {
+          alert('Failed to delete question');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred');
+      }
+    });
+  </script>
+</body>
+</html>
